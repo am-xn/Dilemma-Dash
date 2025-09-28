@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilemma Dash - Make Impossible Choices!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bio {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .category-card.selected {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .category-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .category-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .category-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .settings-panel {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .setting-option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .setting-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .setting-option.active {
+            background: rgba(76, 201, 196, 0.3);
+            border-color: #4ecdc4;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .question-container {
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            line-height: 1.4;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .choices-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px 20px;
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease, background 0.3s ease, transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .choice-btn:hover {
+            border-color: #4ecdc4;
+            background: rgba(76, 201, 196, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .choice-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .choice-btn.selected {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: #ff6b6b;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .results-screen {
+            text-align: center;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .result-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+        }
+
+        .personality-insight {
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.2), rgba(76, 201, 196, 0.2));
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .game-container {
+                padding: 20px;
+            }
+
+            .choices-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                gap: 15px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.4rem;
+            }
+        }
+
+        .share-btn {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 201, 196, 0.4);
+        }
+
+        .percentage-reveal {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .percentage-bars {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .percentage-bar {
+            flex: 1;
+            text-align: center;
+        }
+
+        .bar-fill {
+            height: 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: width 1s ease;
+            width: 0%;
+        }
+
+        .bar-a {
+            background: linear-gradient(45deg, #ff6b6b, #ff8a80);
+        }
+
+        .bar-b {
+            background: linear-gradient(45deg, #4ecdc4, #80deea);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10001;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .share-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .share-platform-btn {
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .share-platform-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .whatsapp { background: #25D366; }
+        .twitter { background: #1DA1F2; }
+        .facebook { background: #1877F2; }
+        .telegram { background: #0088CC; }
+        .linkedin { background: #0077B5; }
+        .copy { background: #FF6B6B; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">🎯 Dilemma Dash</h1>
+            <p class="tagline">The Ultimate Choice Game - Test Your Decision Making!</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number" id="totalChoices">0</div>
+                <div class="stat-label">Total Choices</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="currentStreak">0</div>
+                <div class="stat-label">Current Streak</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="questionsAnswered">0</div>
+                <div class="stat-label">Questions Answered</div>
+            </div>
+        </div>
+
+        <div class="game-container">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <h2 class="welcome-title">Welcome to Dilemma Dash!</h2>
+                <div class="bio">
+                    <p><strong>🎮 About This Game:</strong></p>
+                    <p>Dilemma Dash is the ultimate decision-making adventure that challenges your mind with impossible choices! From ethical dilemmas to fantasy superpowers, from career decisions to relationship puzzles - every choice reveals something about who you are.</p>
+                    <br>
+                    <p><strong>✨ What Makes It Special:</strong></p>
+                    <p>• Progressive difficulty that grows with you<br>
+                    • Real-time percentage reveals of what others chose<br>
+                    • Personality insights based on your decisions<br>
+                    • Multiple themed categories to explore<br>
+                    • Timer mode for those who love pressure<br>
+                    • Streak system that rewards quick thinking</p>
+                    <br>
+                    <p>Ready to discover your true decision-making style? Let's dive in! 🚀</p>
+                </div>
+
+                <h3 style="margin: 30px 0 20px 0;">Choose Your Adventure:</h3>
+                <div class="category-grid">
+                    <div class="category-card selected" data-category="adventure">
+                        <div class="category-emoji">🏔️</div>
+                        <div class="category-name">Adventure</div>
+                        <div class="category-desc">Epic journeys & thrilling escapes</div>
+                    </div>
+                    <div class="category-card" data-category="superpowers">
+                        <div class="category-emoji">⚡</div>
+                        <div class="category-name">Superpowers</div>
+                        <div class="category-desc">Magical abilities & fantasy powers</div>
+                    </div>
+                    <div class="category-card" data-category="ethics">
+                        <div class="category-emoji">⚖️</div>
+                        <div class="category-name">Ethics</div>
+                        <div class="category-desc">Moral dilemmas & tough decisions</div>
+                    </div>
+                    <div class="category-card" data-category="lifestyle">
+                        <div class="category-emoji">🏡</div>
+                        <div class="category-name">Lifestyle</div>
+                        <div class="category-desc">Daily choices & life preferences</div>
+                    </div>
+                    <div class="category-card" data-category="career">
+                        <div class="category-emoji">💼</div>
+                        <div class="category-name">Career</div>
+                        <div class="category-desc">Professional paths & success</div>
+                    </div>
+                    <div class="category-card" data-category="relationships">
+                        <div class="category-emoji">💝</div>
+                        <div class="category-name">Relationships</div>
+                        <div class="category-desc">Love, friendship & social bonds</div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px 0;">Game Settings:</h3>
+                <div class="settings-panel">
+                    <div class="setting-option" data-setting="timer" data-value="false">
+                        <div>⏰ No Timer</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Take your time</div>
+                    </div>
+                    <div class="setting-option active" data-setting="timer" data-value="true">
+                        <div>⚡ Timer Mode</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">10 seconds per question</div>
+                    </div>
+                    <div class="setting-option active" data-setting="difficulty" data-value="progressive">
+                        <div>📈 Progressive</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Gets harder over time</div>
+                    </div>
+                    <div class="setting-option" data-setting="difficulty" data-value="random">
+                        <div>🎲 Random</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Mixed difficulty</div>
+                    </div>
+                </div>
+
+                <button class="start-btn" onclick="startGame()">🚀 Start Dilemma Dash!</button>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="gameScreen" class="question-container hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+
+                <div id="timerDisplay" class="timer-display hidden">10</div>
+
+                <div class="question-text" id="questionText">Loading your first dilemma...</div>
+
+                <div class="choices-container">
+                    <button class="choice-btn" id="choiceA" onclick="makeChoice('A')">Choice A</button>
+                    <button class="choice-btn" id="choiceB" onclick="makeChoice('B')">Choice B</button>
+                </div>
+
+                <div id="percentageReveal" class="percentage-reveal hidden">
+                    <h4>🔥 What Others Chose:</h4>
+                    <div class="percentage-bars">
+                        <div class="percentage-bar">
+                            <div class="bar-fill bar-a" id="barA"></div>
+                            <div id="percentA">0%</div>
+                            <div>Choice A</div>
+                        </div>
+                        <div class="percentage-bar">
+                            <div class="bar-fill bar-b" id="barB"></div>
+                            <div id="percentB">0%</div>
+                            <div>Choice B</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="skipQuestion()">⏭️ Skip</button>
+                    <button class="action-btn" onclick="nextQuestion()">➡️ Next</button>
+                    <button class="action-btn" onclick="showResults()">📊 Results</button>
+                    <button class="action-btn" onclick="resetGame()">🔄 New Game</button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="results-screen hidden">
+                <h2 class="welcome-title">🎉 Your Dilemma Dash Results!</h2>
+                
+                <div class="result-stats">
+                    <div class="result-item">
+                        <div class="result-value" id="finalScore">0</div>
+                        <div>Questions Completed</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value" id="finalStreak">0</div>
+                        <div>Best Streak</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value" id="finalTime">0s</div>
+                        <div>Average Time</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value" id="decisionStyle">🤔</div>
+                        <div>Decision Style</div>
+                    </div>
+                </div>
+
+                <div class="personality-insight">
+                    <h3 style="color: #4ecdc4; margin-bottom: 15px;">🧠 Your Personality Insight</h3>
+                    <p id="personalityText">Based on your choices, you show a balanced approach to decision-making...</p>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button class="share-btn" onclick="shareResults()">📱 Share Results</button>
+                    <button class="start-btn" onclick="resetGame()">🎯 Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            currentQuestion: 0,
+            questionsAnswered: 0,
+            totalChoices: parseInt(localStorage.getItem('totalChoices') || '0'),
+            currentStreak: 0,
+            bestStreak: parseInt(localStorage.getItem('bestStreak') || '0'),
+            selectedCategory: 'adventure',
+            timerEnabled: true,
+            difficulty: 'progressive',
+            timer: null,
+            timeLeft: 10,
+            choices: [],
+            startTime: Date.now(),
+            responseTimes: [],
+            currentQuestionSet: []
+        };
+
+        // Question Database
+        const questions = {
+            adventure: [
+                {
+                    text: "Would you rather explore the depths of the ocean or the vastness of space?",
+                    choiceA: "🌊 Deep Ocean Exploration",
+                    choiceB: "🚀 Space Adventure",
+                    stats: { A: 35, B: 65 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather have the ability to time travel or teleport anywhere instantly?",
+                    choiceA: "⏰ Time Travel",
+                    choiceB: "✨ Instant Teleportation",
+                    stats: { A: 58, B: 42 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather climb Mount Everest or dive to the deepest ocean trench?",
+                    choiceA: "🏔️ Climb Everest",
+                    choiceB: "🌊 Deep Sea Dive",
+                    stats: { A: 72, B: 28 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather explore a newly discovered planet or a lost underwater city?",
+                    choiceA: "🪐 New Planet",
+                    choiceB: "🏛️ Lost Atlantis",
+                    stats: { A: 63, B: 37 },
+                    difficulty: 3
+                },
+                {
+                    text: "Would you rather survive alone on a deserted island or in a zombie apocalypse with a group?",
+                    choiceA: "🏝️ Deserted Island Alone",
+                    choiceB: "🧟 Zombie Apocalypse Group",
+                    stats: { A: 34, B: 66 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather go on a solo backpacking trip around the world or lead an expedition to Antarctica?",
+                    choiceA: "🎒 Solo World Backpacking",
+                    choiceB: "🧊 Lead Antarctica Expedition",
+                    stats: { A: 48, B: 52 },
+                    difficulty: 3
+                }
+            ],
+            superpowers: [
+                {
+                    text: "Would you rather be able to fly or be invisible?",
+                    choiceA: "🦅 Power of Flight",
+                    choiceB: "👻 Invisibility",
+                    stats: { A: 45, B: 55 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather control time or read minds?",
+                    choiceA: "⏱️ Time Control",
+                    choiceB: "🧠 Mind Reading",
+                    stats: { A: 68, B: 32 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather have super strength or super intelligence?",
+                    choiceA: "💪 Super Strength",
+                    choiceB: "🧪 Super Intelligence",
+                    stats: { A: 25, B: 75 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather control all elements or shape-shift into any animal?",
+                    choiceA: "🔥 Elemental Control",
+                    choiceB: "🦎 Shape-shifting",
+                    stats: { A: 52, B: 48 },
+                    difficulty: 3
+                },
+                {
+                    text: "Would you rather have laser vision or super hearing?",
+                    choiceA: "👁️ Laser Vision",
+                    choiceB: "👂 Super Hearing",
+                    stats: { A: 71, B: 29 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather control gravity or manipulate probability?",
+                    choiceA: "🌍 Control Gravity",
+                    choiceB: "🎲 Manipulate Probability",
+                    stats: { A: 43, B: 57 },
+                    difficulty: 3
+                }
+            ],
+            ethics: [
+                {
+                    text: "Would you rather save 5 strangers or 1 family member?",
+                    choiceA: "👥 Save 5 Strangers",
+                    choiceB: "❤️ Save Family Member",
+                    stats: { A: 23, B: 77 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather know when you'll die or how you'll die?",
+                    choiceA: "📅 When You'll Die",
+                    choiceB: "⚰️ How You'll Die",
+                    stats: { A: 71, B: 29 },
+                    difficulty: 3
+                },
+                {
+                    text: "Would you rather be able to end world hunger or cure all diseases?",
+                    choiceA: "🍞 End World Hunger",
+                    choiceB: "💊 Cure All Diseases",
+                    stats: { A: 41, B: 59 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather live in a world without lies or without privacy?",
+                    choiceA: "🤥 No Lies",
+                    choiceB: "👁️ No Privacy",
+                    stats: { A: 67, B: 33 },
+                    difficulty: 3
+                },
+                {
+                    text: "Would you rather be immortal but watch everyone you love die, or live a normal lifespan?",
+                    choiceA: "♾️ Immortal but Alone",
+                    choiceB: "💀 Normal Lifespan",
+                    stats: { A: 18, B: 82 },
+                    difficulty: 3
+                }
+            ],
+            lifestyle: [
+                {
+                    text: "Would you rather live in a big city or a small town?",
+                    choiceA: "🏙️ Big City Life",
+                    choiceB: "🏘️ Small Town Charm",
+                    stats: { A: 62, B: 38 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather have unlimited money or unlimited time?",
+                    choiceA: "💰 Unlimited Money",
+                    choiceB: "⏰ Unlimited Time",
+                    stats: { A: 34, B: 66 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather always be 10 minutes late or 20 minutes early?",
+                    choiceA: "⏰ Always Late",
+                    choiceB: "⏱️ Always Early",
+                    stats: { A: 18, B: 82 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather never have to sleep or never have to eat?",
+                    choiceA: "🌙 Never Sleep",
+                    choiceB: "🍎 Never Eat",
+                    stats: { A: 73, B: 27 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather live without music or without movies for the rest of your life?",
+                    choiceA: "🎵 No Music",
+                    choiceB: "🎬 No Movies",
+                    stats: { A: 26, B: 74 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather have a rewind button for your life or a pause button?",
+                    choiceA: "⏪ Rewind Button",
+                    choiceB: "⏸️ Pause Button",
+                    stats: { A: 58, B: 42 },
+                    difficulty: 2
+                }
+            ],
+            career: [
+                {
+                    text: "Would you rather be your own boss or have job security?",
+                    choiceA: "👑 Be Your Own Boss",
+                    choiceB: "🛡️ Job Security",
+                    stats: { A: 58, B: 42 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather be famous for your work or make a lot of money anonymously?",
+                    choiceA: "🌟 Fame & Recognition",
+                    choiceB: "💰 Anonymous Wealth",
+                    stats: { A: 43, B: 57 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather work your dream job for minimum wage or a boring job for millions?",
+                    choiceA: "💭 Dream Job, Low Pay",
+                    choiceB: "😴 Boring Job, High Pay",
+                    stats: { A: 39, B: 61 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather retire at 40 with modest savings or 65 with luxury?",
+                    choiceA: "🏖️ Early Retirement",
+                    choiceB: "💎 Luxury Later",
+                    stats: { A: 71, B: 29 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather work from home forever or never be able to work from home?",
+                    choiceA: "🏠 Work From Home Forever",
+                    choiceB: "🏢 Always Work in Office",
+                    stats: { A: 67, B: 33 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather be the CEO of a failing company or a regular employee at a successful one?",
+                    choiceA: "👔 CEO of Failing Company",
+                    choiceB: "👤 Employee at Successful Company",
+                    stats: { A: 35, B: 65 },
+                    difficulty: 2
+                }
+            ],
+            relationships: [
+                {
+                    text: "Would you rather find your soulmate or your best friend?",
+                    choiceA: "💕 Find Soulmate",
+                    choiceB: "👯 Find Best Friend",
+                    stats: { A: 47, B: 53 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather be loved by everyone or deeply understood by one person?",
+                    choiceA: "🌟 Loved by All",
+                    choiceB: "💝 Deeply Understood",
+                    stats: { A: 31, B: 69 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather have many acquaintances or few close friends?",
+                    choiceA: "👥 Many Acquaintances",
+                    choiceB: "❤️ Few Close Friends",
+                    stats: { A: 22, B: 78 },
+                    difficulty: 1
+                },
+                {
+                    text: "Would you rather be in a relationship where you love more or are loved more?",
+                    choiceA: "💖 You Love More",
+                    choiceB: "💝 You Are Loved More",
+                    stats: { A: 42, B: 58 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather have a partner who always tells the truth even if it hurts, or one who tells white lies to protect your feelings?",
+                    choiceA: "🤐 Always Honest",
+                    choiceB: "🤥 Protective White Lies",
+                    stats: { A: 76, B: 24 },
+                    difficulty: 2
+                },
+                {
+                    text: "Would you rather spend quality time with family or friends when you only have limited free time?",
+                    choiceA: "👨‍👩‍👧‍👦 Family Time",
+                    choiceB: "👫 Friends Time",
+                    stats: { A: 61, B: 39 },
+                    difficulty: 1
+                }
+            ]
+        };
+
+        // Personality insights
+        const personalityInsights = {
+            adventurous: "You're a bold explorer at heart! You embrace challenges and seek new experiences. Your decisions show courage and a willingness to step into the unknown.",
+            practical: "You're a pragmatic thinker who weighs options carefully. You value stability and security, making choices based on logic rather than impulse.",
+            empathetic: "You have a strong moral compass and care deeply about others. Your decisions reflect compassion and a desire to make the world better.",
+            ambitious: "You're driven by success and achievement. Your choices show determination and a willingness to take calculated risks for greater rewards.",
+            social: "Relationships and connections are central to who you are. You value harmony and prefer decisions that strengthen bonds with others.",
+            balanced: "You show a well-rounded approach to decision-making, considering multiple perspectives before choosing. You adapt your style to each situation."
+        };
+
+        // Dynamic question generation
+        function generateExtraQuestions(category) {
+            const extraQuestions = [];
+            
+            const templates = {
+                adventure: [
+                    "Would you rather explore Mars or the deepest ocean trenches?",
+                    "Would you rather survive in the Arctic wilderness or the Amazon rainforest?",
+                    "Would you rather discover a new species or a lost civilization?"
+                ],
+                superpowers: [
+                    "Would you rather have perfect memory or the ability to forget painful memories?",
+                    "Would you rather control weather or communicate with animals?",
+                    "Would you rather have super speed or super strength?"
+                ],
+                lifestyle: [
+                    "Would you rather always know what people are thinking or never have to guess?",
+                    "Would you rather live forever but alone or live normally with loved ones?",
+                    "Would you rather have perfect health or perfect happiness?"
+                ]
+            };
+
+            if (templates[category]) {
+                templates[category].forEach((text, index) => {
+                    extraQuestions.push({
+                        text: text,
+                        choiceA: "Option A",
+                        choiceB: "Option B",
+                        stats: { A: Math.floor(Math.random() * 60) + 20, B: Math.floor(Math.random() * 60) + 20 },
+                        difficulty: Math.floor(Math.random() * 3) + 1
+                    });
+                });
+            }
+
+            return extraQuestions;
+        }
+
+        // Initialize game
+        function initGame() {
+            updateStats();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Category selection
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    gameState.selectedCategory = this.dataset.category;
+                });
+            });
+
+            // Settings
+            document.querySelectorAll('.setting-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const setting = this.dataset.setting;
+                    const value = this.dataset.value;
+                    
+                    document.querySelectorAll(`[data-setting="${setting}"]`).forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    
+                    if (setting === 'timer') {
+                        gameState.timerEnabled = value === 'true';
+                    } else if (setting === 'difficulty') {
+                        gameState.difficulty = value;
+                    }
+                });
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('totalChoices').textContent = gameState.totalChoices;
+            document.getElementById('currentStreak').textContent = gameState.currentStreak;
+            document.getElementById('questionsAnswered').textContent = gameState.questionsAnswered;
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startGame() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            gameState.currentQuestion = 0;
+            gameState.questionsAnswered = 0;
+            gameState.currentStreak = 0;
+            gameState.choices = [];
+            gameState.responseTimes = [];
+            gameState.startTime = Date.now();
+            
+            // Get questions and add some extras
+            let categoryQuestions = [...questions[gameState.selectedCategory]];
+            const extraQuestions = generateExtraQuestions(gameState.selectedCategory);
+            categoryQuestions = categoryQuestions.concat(extraQuestions);
+            
+            gameState.currentQuestionSet = shuffleArray(categoryQuestions);
+            
+            showQuestion();
+            
+            if (gameState.timerEnabled) {
+                startTimer();
+            }
+        }
+
+        function showQuestion() {
+            if (gameState.currentQuestion >= gameState.currentQuestionSet.length) {
+                showResults();
+                return;
+            }
+
+            const question = gameState.currentQuestionSet[gameState.currentQuestion];
+            
+            const progress = ((gameState.currentQuestion + 1) / gameState.currentQuestionSet.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            document.getElementById('questionText').textContent = question.text;
+            document.getElementById('choiceA').textContent = question.choiceA;
+            document.getElementById('choiceB').textContent = question.choiceB;
+            
+            document.getElementById('choiceA').classList.remove('selected');
+            document.getElementById('choiceB').classList.remove('selected');
+            document.getElementById('percentageReveal').classList.add('hidden');
+            
+            if (gameState.timerEnabled) {
+                gameState.timeLeft = 10;
+                document.getElementById('timerDisplay').textContent = gameState.timeLeft;
+                document.getElementById('timerDisplay').classList.remove('hidden');
+            } else {
+                document.getElementById('timerDisplay').classList.add('hidden');
+            }
+        }
+
+        function startTimer() {
+            if (gameState.timer) clearInterval(gameState.timer);
+            
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timerDisplay').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timer);
+                    const randomChoice = Math.random() > 0.5 ? 'A' : 'B';
+                    makeChoice(randomChoice, true);
+                }
+            }, 1000);
+        }
+
+        function makeChoice(choice, timedOut = false) {
+            if (gameState.timer) clearInterval(gameState.timer);
+            
+            const question = gameState.currentQuestionSet[gameState.currentQuestion];
+            const responseTime = timedOut ? 10000 : (10000 - gameState.timeLeft * 1000);
+            
+            gameState.choices.push({
+                question: gameState.currentQuestion,
+                choice: choice,
+                responseTime: responseTime,
+                timedOut: timedOut
+            });
+            
+            gameState.responseTimes.push(responseTime);
+            gameState.questionsAnswered++;
+            gameState.totalChoices++;
+            
+            if (!timedOut) {
+                gameState.currentStreak++;
+                if (gameState.currentStreak > gameState.bestStreak) {
+                    gameState.bestStreak = gameState.currentStreak;
+                    localStorage.setItem('bestStreak', gameState.bestStreak.toString());
+                }
+            } else {
+                gameState.currentStreak = 0;
+            }
+            
+            localStorage.setItem('totalChoices', gameState.totalChoices.toString());
+            updateStats();
+            
+            if (choice === 'A') {
+                document.getElementById('choiceA').classList.add('selected');
+            } else {
+                document.getElementById('choiceB').classList.add('selected');
+            }
+            
+            showPercentages(question, choice);
+            
+            setTimeout(() => {
+                nextQuestion();
+            }, 3000);
+        }
+
+        function showPercentages(question, userChoice) {
+            const percentageReveal = document.getElementById('percentageReveal');
+            percentageReveal.classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('barA').style.width = question.stats.A + '%';
+                document.getElementById('barB').style.width = question.stats.B + '%';
+                document.getElementById('percentA').textContent = question.stats.A + '%';
+                document.getElementById('percentB').textContent = question.stats.B + '%';
+            }, 100);
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestion++;
+            showQuestion();
+            
+            if (gameState.timerEnabled && gameState.currentQuestion < gameState.currentQuestionSet.length) {
+                startTimer();
+            }
+        }
+
+        function skipQuestion() {
+            gameState.currentStreak = 0;
+            updateStats();
+            nextQuestion();
+        }
+
+        function showResults() {
+            if (gameState.timer) clearInterval(gameState.timer);
+            
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const avgResponseTime = gameState.responseTimes.length > 0 
+                ? Math.round(gameState.responseTimes.reduce((a, b) => a + b, 0) / gameState.responseTimes.length / 1000)
+                : 0;
+            
+            document.getElementById('finalScore').textContent = gameState.questionsAnswered;
+            document.getElementById('finalStreak').textContent = gameState.bestStreak;
+            document.getElementById('finalTime').textContent = avgResponseTime + 's';
+            
+            const personality = determinePersonality();
+            document.getElementById('decisionStyle').textContent = personality.emoji;
+            document.getElementById('personalityText').textContent = personality.text;
+        }
+
+        function determinePersonality() {
+            if (gameState.choices.length === 0) {
+                return { emoji: '🤔', text: personalityInsights.balanced };
+            }
+            
+            const avgResponseTime = gameState.responseTimes.reduce((a, b) => a + b, 0) / gameState.responseTimes.length;
+            
+            if (avgResponseTime < 3000) {
+                return { emoji: '⚡', text: personalityInsights.adventurous };
+            }
+            
+            if (avgResponseTime > 7000) {
+                return { emoji: '🧠', text: personalityInsights.practical };
+            }
+            
+            if (gameState.selectedCategory === 'ethics') {
+                return { emoji: '💝', text: personalityInsights.empathetic };
+            } else if (gameState.selectedCategory === 'career') {
+                return { emoji: '🎯', text: personalityInsights.ambitious };
+            } else if (gameState.selectedCategory === 'relationships') {
+                return { emoji: '❤️', text: personalityInsights.social };
+            }
+            
+            return { emoji: '⚖️', text: personalityInsights.balanced };
+        }
+
+        function shareResults() {
+            const avgTime = gameState.responseTimes.length > 0 
+                ? Math.round(gameState.responseTimes.reduce((a, b) => a + b, 0) / gameState.responseTimes.length / 1000)
+                : 0;
+            
+            const personality = determinePersonality();
+            const text = `🎯 I just completed Dilemma Dash!\n\n📊 Questions: ${gameState.questionsAnswered}\n🔥 Best Streak: ${gameState.bestStreak}\n⏱️ Avg Time: ${avgTime}s\n🧠 Style: ${personality.emoji}\n\nTry it yourself!`;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="margin-bottom: 20px; font-size: 1.5rem;">📱 Share Your Results</h3>
+                    <div class="share-grid">
+                        <button class="share-platform-btn whatsapp" onclick="shareToWhatsApp('${encodeURIComponent(text)}')">📱 WhatsApp</button>
+                        <button class="share-platform-btn twitter" onclick="shareToTwitter('${encodeURIComponent(text)}')">🐦 Twitter</button>
+                        <button class="share-platform-btn facebook" onclick="shareToFacebook()">📘 Facebook</button>
+                        <button class="share-platform-btn telegram" onclick="shareToTelegram('${encodeURIComponent(text)}')">✈️ Telegram</button>
+                        <button class="share-platform-btn linkedin" onclick="shareToLinkedIn()">💼 LinkedIn</button>
+                        <button class="share-platform-btn copy" onclick="copyResults('${text.replace(/'/g, "\\'")}')">📋 Copy</button>
+                    </div>
+                    <button onclick="closeModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer;">✕ Close</button>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        function shareToWhatsApp(text) {
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+            closeModal();
+        }
+
+        function shareToTwitter(text) {
+            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+            closeModal();
+        }
+
+        function shareToFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+            closeModal();
+        }
+
+        function shareToTelegram(text) {
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${text}`, '_blank');
+            closeModal();
+        }
+
+        function shareToLinkedIn() {
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, '_blank');
+            closeModal();
+        }
+
+        function copyResults(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('📋 Results copied to clipboard!');
+                });
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('📋 Results copied to clipboard!');
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function resetGame() {
+            gameState.currentQuestion = 0;
+            gameState.questionsAnswered = 0;
+            gameState.currentStreak = 0;
+            gameState.choices = [];
+            gameState.responseTimes = [];
+            
+            if (gameState.timer) clearInterval(gameState.timer);
+            
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+            
+            updateStats();
+            showNotification('🎯 Ready for a new challenge!');
+        }
+
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
